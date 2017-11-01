@@ -1,0 +1,9 @@
+[package]
+name = "linear-regression"
+version = "0.1.0"
+authors = ["Quentin de Quelen <quentin@dequelen.me>"]
+
+[[bin]]
+name = "linear-regression"
+path = "src/main.rs"
+doc = false
