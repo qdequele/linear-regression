@@ -4,10 +4,13 @@
  * Author: Quentin de Quelen (quentin@dequelen.me)
  */
 
+
 use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::string::*;
+
+mod resolver;
 
 fn main() {
 	
@@ -45,4 +48,7 @@ fn main() {
 		};
 		println!("Line: {}", line);
 	}
+
+	let mut resolver = resolver::Resolver::new();
+	resolver.learn();
 }
