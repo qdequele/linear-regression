@@ -5,8 +5,8 @@
  */
 
 pub struct SetValue {
-	x: u64,
-	y: u64,
+	x: f64,
+	y: f64,
 }
 
 pub struct Resolver {
@@ -21,10 +21,6 @@ pub struct Resolver {
 }
 
 impl Resolver {
-	pub fn hypothesis(&mut self, x: u64) -> f64 {
-		let new = x as f64;
-		return self.theta0 + (self.theta1 * new)
-	}
 
 	#[allow(dead_code)]
 	pub fn learn(&mut self) {
@@ -40,29 +36,18 @@ impl Resolver {
 		}
 	}
 
-	for i = 0; i++; i 
+	pub fn hypothesis(&mut self, x: f64) -> f64 {
+		return self.theta0 + (self.theta1 * x)
 	}
 
-	// n calculate_mean_squared_error(&mut self) {
-	// 	ttxX: f64 = reduce(set.x)
-	// 	ttxY: f64 = reduce(set.y)
-	// 	xBare: f64 = ttxX / len(self.set)
-	// 	yBare: f64 = ttxY / len(self.set)
-	// 	xDiff: Vec<f64> = set[i].x - xBare
-	// 	yDiff: Vec<f64> = set[i].y - yBare
-	// 	yDiffSquared: Vec<f64> = map(yDiff * yDiff)
-	// 	xMultY: Vec<f64> = xDiff[i] * yDiff[i]
-	// 	tmp_theta1 = reduce(xMultY) / reduce(yDiffSquared)
-	// 	tmp_theta0 = yBare - (xBare * tmp_theta1)
-	// }
-
 	fn train(&mut self) -> (f64, f64) {
+
 		let m = self.set.len() as f64;
 		let mut sum_0 = 0_f64;
 		let mut sum_1 = 0_f64;
 
 		for val in self.set {
-			let d = hypothesis(val.x) * val.y;
+			let d = self.hypothesis(val.x) * val.y;
 			sum_0 += d;
 			sum_1 += d * val.x;
 		}
@@ -71,13 +56,12 @@ impl Resolver {
 	}
 
 	fn training_loop(&mut self) {
-		for _ in 0...self.number_of_training {
-			let tmp_theta0, tmp_theta1 = train();
+		for _ in 0..self.number_of_training {
+			let (tmp_theta0, tmp_theta1) = self.train();
 			self.theta0 -= tmp_theta0;
 			self.theta1 -= tmp_theta1;
 		}
 	}
-
 
 	fn calculate_gradient_descent_minimization(&mut self) {
 		for x in 0..self.number_of_training {
