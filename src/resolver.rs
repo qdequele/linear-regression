@@ -4,38 +4,57 @@
  * Author: Quentin de Quelen (quentin@dequelen.me)
  */
 
+static LEARN_RATE: f64 = 0.000_1;
+static NORMALISATION: f64 = 1_000.0;
+static PRECISION: f64 = 0.000_001;
+
 #[derive(Debug)]
 pub struct SetValue {
 	pub x: f64,
-	pub y: f64,
+	pub y: f64
 }
 
 pub struct Resolver {
-	pub theta0: f64, // Ø0
-	pub theta1: f64, // Ø1
-	delta_theta: f64, // DØ = 1000.0
-	learning_rate: f64, // alpha = 2.0
-	number_of_training: u64, // m = 100
-	pub set: Vec<SetValue>,
+	theta0: f64, // Ø0
+	theta1: f64, // Ø1
+	set: Vec<SetValue>,
+	set_len: f64, // m
+	pub nb_iter: u64,
 }
 
 impl Resolver {
 
 	#[allow(dead_code)]
 	pub fn learn(&mut self) {
+
+		self.set_len = self.set.len() as f64;
+		let mut new_set: Vec<SetValue> = Vec::new();
+
+		for val in &self.set {
+			let _val: SetValue = SetValue {
+				x: val.x / NORMALISATION,
+				y: val.y / NORMALISATION
+			};
+			new_set.push(_val);
+		}
+
+		self.set = new_set;
+
 		self.training_loop();
 	}
 
 	#[allow(dead_code)]
 	pub fn new(set : Vec<SetValue>) -> Resolver {
-		Resolver {
+		let mut resolver: Resolver = Resolver {
 			theta0: 0_f64,
 			theta1: 0_f64,
-			delta_theta: 3_f64,
-			learning_rate: 0.1_f64,
-			number_of_training: 1_000_u64,
-			set: set
-		}
+			set: set,
+			set_len: 0_f64,
+			nb_iter: 0_u64 
+		};
+
+		resolver.set_len = resolver.set.len() as f64;
+		resolver
 	}
 
 	pub fn hypothesis(&self, x: f64) -> f64 {
@@ -43,34 +62,33 @@ impl Resolver {
 	}
 	
 	fn train(&self, set: &Vec<SetValue>) -> (f64, f64) {
-		let m = self.set.len() as f64;
+		let m = self.set_len;
 		let mut sum_0 = 0_f64;
 		let mut sum_1 = 0_f64;
 
 		for val in set {
-			let d = self.hypothesis(val.x) * val.y;
+			let d = self.hypothesis(val.x) - val.y;
 			sum_0 += d;
 			sum_1 += d * val.x;
 		}
-
-		(self.learning_rate * ( 1_f64 / m) * sum_0, self.learning_rate * ( 1_f64 / m) * sum_1)
+		(LEARN_RATE * ( sum_0 / m ) , LEARN_RATE * ( sum_1 / m))
 	}
 
 	#[allow(dead_code)]
 	fn training_loop(&mut self) {
-		for _ in 0..self.number_of_training {
+		let mut i = 0_u32;
+
+		loop {
 			let (tmp_theta0, tmp_theta1) = self.train(&self.set);
+			if tmp_theta0.abs() < PRECISION && tmp_theta1.abs() < PRECISION {
+				self.theta0 = self.theta0 * NORMALISATION;
+				break
+			}
 			self.theta0 -= tmp_theta0;
 			self.theta1 -= tmp_theta1;
+			i+=1;
 		}
+		println!("precision : {}", i);
 	}
 
-	#[allow(dead_code)]
-	fn calculate_gradient_descent_minimization(&mut self) {
-		for x in 0..self.number_of_training {
-			println!("{} \t| {} \t| {}", x, self.delta_theta, (self.learning_rate * 2.0 * self.delta_theta));
-			self.delta_theta = self.delta_theta - (self.learning_rate * 2.0 * self.delta_theta)
-		}
-		println!("result theta = {}", self.delta_theta);
-	}
 }
