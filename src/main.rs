@@ -15,7 +15,7 @@ mod resolver;
 use resolver::{SetValue};
 
 fn main() {
-	
+
 	let args: Vec<String> = env::args().collect();
 
 	if args.len() == 1 {
@@ -62,11 +62,8 @@ fn main() {
 		}
 	}
 
-	// println!("{:?}", _set);
-
 	let mut resolver = resolver::Resolver::new(_set);
 	resolver.learn();
-
 
 	let res_1 = resolver.hypothesis(80_000_f64);
 	println!("res for 80_000 : {}", res_1);
