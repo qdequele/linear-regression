@@ -7,6 +7,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::io::Result;
+use std::io::{Error, ErrorKind};
 
 static LEARN_RATE	: f64 = 0.000_1;
 static NORMALISATION: f64 = 1_000.0;
@@ -44,7 +45,9 @@ impl Resolver {
 	#[allow(dead_code)]
 	pub fn new_from_csv(filename: &str) -> Result<Resolver> {
 
-		assert!(filename.ends_with(".csv"));
+		if !filename.ends_with(".csv") {
+			return Err(Error::new(ErrorKind::Other, "file is not a csv"))
+		};
 
 		let f = match File::open(filename) {
 			Ok(f) => f,
