@@ -6,13 +6,11 @@
 
 
 use std::env;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 use std::string::*;
 
 mod resolver;
 
-use resolver::{SetValue, Resolver};
+use resolver::{Resolver};
 
 fn main() {
 
