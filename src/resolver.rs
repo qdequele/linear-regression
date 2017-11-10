@@ -46,7 +46,7 @@ impl Resolver {
 		let mut resolver: Resolver = Resolver {
 			theta0: 0_f64,
 			theta1: 0_f64,
-			set		: set,
+			set: set,
 			set_len: 0_f64
 		};
 
@@ -59,7 +59,6 @@ impl Resolver {
 	}
 	
 	fn train(&self, set: &Vec<SetValue>) -> (f64, f64) {
-		let m = self.set_len;
 		let mut sum_0 = 0_f64;
 		let mut sum_1 = 0_f64;
 
@@ -68,12 +67,10 @@ impl Resolver {
 			sum_0 += d;
 			sum_1 += d * val.x;
 		}
-		(LEARN_RATE * ( sum_0 / m ) , LEARN_RATE * ( sum_1 / m))
+		(LEARN_RATE * ( sum_0 / self.set_len ) , LEARN_RATE * ( sum_1 / self.set_len))
 	}
 
 	fn training_loop(&mut self) {
-		let mut i = 0_u32;
-
 		loop {
 			let (tmp_theta0, tmp_theta1) = self.train(&self.set);
 			if tmp_theta0.abs() < PRECISION && tmp_theta1.abs() < PRECISION {
@@ -82,9 +79,7 @@ impl Resolver {
 			}
 			self.theta0 -= tmp_theta0;
 			self.theta1 -= tmp_theta1;
-			i+=1;
 		}
-		println!("precision : {}", i);
 	}
 
 }
