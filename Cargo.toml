@@ -7,3 +7,4 @@ authors = ["Quentin de Quelen <quentin@dequelen.me>"]
 name = "linear-regression"
 path = "src/main.rs"
 doc = false
+

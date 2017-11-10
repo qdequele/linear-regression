@@ -4,6 +4,10 @@
  * Author: Quentin de Quelen (quentin@dequelen.me)
  */
 
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::io::Result;
+
 static LEARN_RATE	: f64 = 0.000_1;
 static NORMALISATION: f64 = 1_000.0;
 static PRECISION	: f64 = 0.000_001;
@@ -22,8 +26,58 @@ pub struct Resolver {
 
 impl Resolver {
 
+	#[no_mangle]
+	pub extern fn new(set : Vec<SetValue>) -> Resolver {
+		let mut resolver: Resolver = Resolver {
+			theta0: 0_f64,
+			theta1: 0_f64,
+			set: set,
+			set_len: 0_f64
+		};
+
+		resolver.set_len = resolver.set.len() as f64;
+		resolver.learn();
+		resolver
+	}
+
+	#[no_mangle]
 	#[allow(dead_code)]
-	pub fn learn(&mut self) {
+	pub fn new_from_csv(filename: &str) -> Result<Resolver> {
+
+		assert!(filename.ends_with(".csv"));
+
+		let f = match File::open(filename) {
+			Ok(f) => f,
+			Err(e) => return Err(e)
+		};
+
+		let f = BufReader::new(f);
+		let mut _set : Vec<SetValue> = Vec::new();
+
+		for line in f.lines() {
+			let line = match line {
+				Ok(line) => line,
+				Err(e) => return Err(e)
+			};
+
+			let tab : Vec<&str> = line.split(",").collect();
+
+			if tab[0].parse::<f64>().is_ok() && tab[1].parse::<f64>().is_ok() {
+				_set.push(SetValue {
+					x: tab[0].parse().unwrap(),
+					y: tab[1].parse().unwrap()
+				});
+			}
+		}
+		return Ok(Resolver::new(_set))
+	}
+
+	#[no_mangle]
+	pub extern fn hypothesis(&self, x: f64) -> f64 {
+		self.theta0 + (self.theta1 * x)
+	}
+
+	fn learn(&mut self) {
 
 		self.set_len = self.set.len() as f64;
 		let mut new_set: Vec<SetValue> = Vec::new();
@@ -41,23 +95,6 @@ impl Resolver {
 		self.training_loop();
 	}
 
-	#[allow(dead_code)]
-	pub fn new(set : Vec<SetValue>) -> Resolver {
-		let mut resolver: Resolver = Resolver {
-			theta0: 0_f64,
-			theta1: 0_f64,
-			set: set,
-			set_len: 0_f64
-		};
-
-		resolver.set_len = resolver.set.len() as f64;
-		resolver
-	}
-
-	pub fn hypothesis(&self, x: f64) -> f64 {
-		self.theta0 + (self.theta1 * x)
-	}
-	
 	fn train(&self, set: &Vec<SetValue>) -> (f64, f64) {
 		let mut sum_0 = 0_f64;
 		let mut sum_1 = 0_f64;
