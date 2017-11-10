@@ -4,22 +4,20 @@
  * Author: Quentin de Quelen (quentin@dequelen.me)
  */
 
-static LEARN_RATE: f64 = 0.000_1;
+static LEARN_RATE	: f64 = 0.000_1;
 static NORMALISATION: f64 = 1_000.0;
-static PRECISION: f64 = 0.000_001;
+static PRECISION	: f64 = 0.000_001;
 
-#[derive(Debug)]
 pub struct SetValue {
 	pub x: f64,
 	pub y: f64
 }
 
 pub struct Resolver {
-	theta0: f64, // Ø0
-	theta1: f64, // Ø1
-	set: Vec<SetValue>,
-	set_len: f64, // m
-	pub nb_iter: u64,
+	theta0 : f64, // Ø0
+	theta1 : f64, // Ø1
+	set : Vec<SetValue>,
+	set_len : f64, // m
 }
 
 impl Resolver {
@@ -48,9 +46,8 @@ impl Resolver {
 		let mut resolver: Resolver = Resolver {
 			theta0: 0_f64,
 			theta1: 0_f64,
-			set: set,
-			set_len: 0_f64,
-			nb_iter: 0_u64 
+			set		: set,
+			set_len: 0_f64
 		};
 
 		resolver.set_len = resolver.set.len() as f64;
@@ -74,7 +71,6 @@ impl Resolver {
 		(LEARN_RATE * ( sum_0 / m ) , LEARN_RATE * ( sum_1 / m))
 	}
 
-	#[allow(dead_code)]
 	fn training_loop(&mut self) {
 		let mut i = 0_u32;
 
