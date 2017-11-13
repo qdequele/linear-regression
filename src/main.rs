@@ -8,9 +8,8 @@
 use std::env;
 use std::string::*;
 
-mod resolver;
-
-use resolver::{Resolver};
+mod estimate;
+mod learn;
 
 fn main() {
 
@@ -24,18 +23,14 @@ fn main() {
 		return;
 	}
 
-	let resolver = match Resolver::new_from_csv(&args[1]) {
-		Ok(resolver) => resolver,
-		Err(e) => {
-			println!("{:?}", e);
-			return
-		}
-	};
+	learn::learn(&args[1]);
 
-	let res_1 = resolver.hypothesis(80_000_f64);
+	let res_1 = estimate::get_price(80_000_f64);
 	println!("res for 80_000 : {}", res_1);
-	let res_2 = resolver.hypothesis(120_000_f64);
+	let res_2 = estimate::get_price(120_000_f64);
 	println!("res for 120_000 : {}", res_2);
+	let res_3 = estimate::get_price(48_235_f64);
+	println!("res for 48_235 : {}", res_3);
 }
 
 
