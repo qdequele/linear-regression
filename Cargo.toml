@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["Quentin de Quelen <quentin@dequelen.me>"]
 
 [[bin]]
-name = "linear-regression"
-path = "src/main.rs"
+name = "estimate"
+path = "src/estimate.rs"
+doc = false
+
+[[bin]]
+name = "learn"
+path = "src/learn.rs"
 doc = false

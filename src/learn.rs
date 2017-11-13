@@ -12,6 +12,8 @@ use std::io::ErrorKind;
 use std::error::Error;
 use std::io::prelude::*;
 use std::path::Path;
+use std::env;
+use std::string::*;
 
 static LEARN_RATE	: f64 = 0.000_1;
 static NORMALISATION: f64 = 1_000.0;
@@ -26,6 +28,21 @@ pub struct SetValue {
 pub struct Theta {
 	pub _0: f64,
 	pub _1: f64
+}
+
+fn main() {
+
+	let args: Vec<String> = env::args().collect();
+
+	if args.len() == 1 {
+		println!("Need arguments");
+		return;
+	} else if args.len() > 2 {
+		println!("Too mutch arguments");
+		return;
+	}
+
+	learn(&args[1]);
 }
 
 fn hypothesis(theta: &Theta, x: f64) -> f64 {
@@ -151,13 +168,9 @@ fn get_csv(filename: &str) -> Result<Vec<SetValue>> {
 
 fn get_data() -> Theta {
 	let path = Path::new(DATA_FILE);
-	let display = path.display();
 
 	let mut file = match File::open(&path) {
-		Err(why) => {
-			println!("couldn't open {}: {}",
-				display,
-				why.description());
+		Err(_) => {
 			return Theta {
 				_0: 0_f64,
 				_1: 0_f64
@@ -168,10 +181,7 @@ fn get_data() -> Theta {
 
 	let mut s = String::new();
 	match file.read_to_string(&mut s) {
-		Err(why) => {
-			println!("couldn't read {}: {}",
-				display,
-				why.description());
+		Err(_) => {
 			return Theta {
 				_0: 0_f64,
 				_1: 0_f64
