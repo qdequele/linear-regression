@@ -156,10 +156,10 @@ fn get_csv(filename: &str) -> Result<Vec<SetValue>> {
 
 		let tab : Vec<&str> = line.split(",").collect();
 
-		if tab[0].parse::<f64>().is_ok() && tab[1].parse::<f64>().is_ok() {
+		if let (Ok(x), Ok(y)) = (tab[0].parse::<f64>(), tab[1].parse::<f64>()) {
 			_set.push(SetValue {
-				x: tab[0].parse().unwrap(),
-				y: tab[1].parse().unwrap()
+				x: x,
+				y: y
 			});
 		}
 	}
